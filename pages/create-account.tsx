@@ -21,7 +21,7 @@ const CreateAccount = () => {
 
 
     if (isLoading){
-        return true;
+        return null;
     }
     if (!fbUser){
         router.push('/login');
