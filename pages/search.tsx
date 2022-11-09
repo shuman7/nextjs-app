@@ -36,11 +36,13 @@ const Hit: HitsProps<Post>['hitComponent'] = ({hit}) => {
 
     return (
         <div className='rouded-md shadow p-4'>
-            <h2>{hit.title}</h2>
+            <h2 className="line-clamp-2">
+                {hit.title}
+            </h2>
             <p className='text-slate-500'>
                 {format(hit.createdAt, 'yyyy年MM月dd日')}
             </p>
-            {user && <p>{user.name}</p>}
+            {user && <p className="truncate">{user.name}</p>}
         </div>
     )
 }
