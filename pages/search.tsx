@@ -2,12 +2,14 @@ import algoliasearch from 'algoliasearch/lite';
 import { debounce } from 'debounce';
 import { ReactNode } from 'react'
 import { 
+    Configure,
     Hits,
     HitsProps,
     InstantSearch,
+    Pagination,
     SearchBox,
     SearchBoxProps,
-    useInstantSearch
+    useInstantSearch,
 } from 'react-instantsearch-hooks-web';
 import { Post } from '../types/posts';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
@@ -54,8 +56,15 @@ const Search = () => {
                 </span>
             )}
             queryHook={debounce(search, 500)} />
+            <Configure hitsPerPage={2} />
             <NoResultsBoundary>
                 <Hits<Post> hitComponent={Hit} />
+                <Pagination classNames={{
+                    list: 'flex space-x-3',
+                    link: 'p-1 px-3 block',
+                    disabledItem: 'opacity-40',
+                    selectedItem: 'text-blue-500',
+                }}/>
             </NoResultsBoundary>
         </InstantSearch>
     </div>
