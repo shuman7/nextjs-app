@@ -1,6 +1,6 @@
 import algoliasearch from 'algoliasearch/lite';
 import { debounce } from 'debounce';
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { 
     Configure,
     Hits,
@@ -13,6 +13,11 @@ import {
 } from 'react-instantsearch-hooks-web';
 import { Post } from '../types/posts';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { format } from 'date-fns';
+import { doc, getDoc, snapshotEqual } from 'firebase/firestore';
+import { User } from '../types/user';
+import { db } from '../firebase/client';
+import useSWR from 'swr/immutable';
 
 const searchClient = algoliasearch(
     '0IAEHW2DF5', 
@@ -20,7 +25,24 @@ const searchClient = algoliasearch(
 );
 
 const Hit: HitsProps<Post>['hitComponent'] = ({hit}) => {
-    return <div>{hit.title}</div>
+    const { data: user} = useSWR<User>(
+        hit.authorId && `users/${hit.authorId}`,
+            async () => {
+                const ref = doc(db, `users/${hit.authorId}`);
+                const snap = await getDoc(ref)
+                return snap.data() as User;
+            }
+        );
+
+    return (
+        <div className='rouded-md shadow p-4'>
+            <h2>{hit.title}</h2>
+            <p className='text-slate-500'>
+                {format(hit.createdAt, 'yyyy年MM月dd日')}
+            </p>
+            {user && <p>{user.name}</p>}
+        </div>
+    )
 }
 
 const NoResultsBoundary = ({children}: {children: ReactNode}) => {
@@ -30,7 +52,16 @@ const NoResultsBoundary = ({children}: {children: ReactNode}) => {
         return <p>「{results.query}」検索結果はありませんでした</p>
     } 
 
-    return <>{children}</>
+    return (
+        <div>
+            {results.query && (
+                <p className='text-sm-slate-500 my-4'>
+                    「{results.query}」の検索結果が{results.nbHits}件見つかりました。
+                </p>
+            )}
+            { children }
+        </div>
+        )
 }
 
 const Search = () => {
@@ -39,7 +70,7 @@ const Search = () => {
     }
 
   return (
-    <div>
+    <div className="container">
         <h1>検索</h1>
 
         <InstantSearch indexName="posts" searchClient={searchClient}>
@@ -56,9 +87,14 @@ const Search = () => {
                 </span>
             )}
             queryHook={debounce(search, 500)} />
-            <Configure hitsPerPage={2} />
+            <Configure hitsPerPage={5} />
             <NoResultsBoundary>
-                <Hits<Post> hitComponent={Hit} />
+                <Hits<Post> 
+                    classNames={{
+                        list: 'space-y-4 my-6',
+                    }}
+                    hitComponent={Hit} 
+                />
                 <Pagination classNames={{
                     list: 'flex space-x-3',
                     link: 'p-1 px-3 block',
