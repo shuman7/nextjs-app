@@ -18,6 +18,7 @@ import { doc, getDoc, snapshotEqual } from 'firebase/firestore';
 import { User } from '../types/user';
 import { db } from '../firebase/client';
 import useSWR from 'swr/immutable';
+import Link from 'next/link';
 
 const searchClient = algoliasearch(
     '0IAEHW2DF5', 
@@ -37,7 +38,9 @@ const Hit: HitsProps<Post>['hitComponent'] = ({hit}) => {
     return (
         <div className='rouded-md shadow p-4'>
             <h2 className="line-clamp-2">
-                {hit.title}
+                <Link href={`posts/${hit.id}`}>
+                    <a>{hit.title}</a>
+                </Link>
             </h2>
             <p className='text-slate-500'>
                 {format(hit.createdAt, 'yyyy年MM月dd日')}
