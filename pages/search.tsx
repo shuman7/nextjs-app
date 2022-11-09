@@ -1,8 +1,16 @@
-import React from 'react'
 import algoliasearch from 'algoliasearch/lite';
-import { Hits, HitsProps, InstantSearch, SearchBox, SearchBoxProps, useInstantSearch } from 'react-instantsearch-hooks-web';
-import { Post } from '../types/posts';
 import { debounce } from 'debounce';
+import { ReactNode } from 'react'
+import { 
+    Hits,
+    HitsProps,
+    InstantSearch,
+    SearchBox,
+    SearchBoxProps,
+    useInstantSearch
+} from 'react-instantsearch-hooks-web';
+import { Post } from '../types/posts';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const searchClient = algoliasearch(
     '0IAEHW2DF5', 
@@ -33,7 +41,19 @@ const Search = () => {
         <h1>検索</h1>
 
         <InstantSearch indexName="posts" searchClient={searchClient}>
-            <SearchBox queryHook={debounce(search, 500)} />
+            <SearchBox classNames={{
+                root: 'relative inline-block',
+                input: 'rounded-full border-slate-300 pr-10',
+                submitIcon: 'hidden',
+                resetIcon: 'hidden',
+                
+            }} 
+            submitIconComponent={() => (
+                <span className='absolute right-0 p-2 w-10 top-1/2 -translate-y-1/2'>
+                    <MagnifyingGlassIcon className='w-5 h-5 text-slate-500' />
+                </span>
+            )}
+            queryHook={debounce(search, 500)} />
             <NoResultsBoundary>
                 <Hits<Post> hitComponent={Hit} />
             </NoResultsBoundary>
