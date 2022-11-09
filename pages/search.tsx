@@ -19,6 +19,7 @@ import { User } from '../types/user';
 import { db } from '../firebase/client';
 import useSWR from 'swr/immutable';
 import Link from 'next/link';
+import { useUser } from '../lib/user';
 
 const searchClient = algoliasearch(
     '0IAEHW2DF5', 
@@ -26,14 +27,7 @@ const searchClient = algoliasearch(
 );
 
 const Hit: HitsProps<Post>['hitComponent'] = ({hit}) => {
-    const { data: user} = useSWR<User>(
-        hit.authorId && `users/${hit.authorId}`,
-            async () => {
-                const ref = doc(db, `users/${hit.authorId}`);
-                const snap = await getDoc(ref)
-                return snap.data() as User;
-            }
-        );
+    const user = useUser(hit.authorId);
 
     return (
         <div className='rouded-md shadow p-4'>
