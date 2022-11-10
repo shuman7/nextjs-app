@@ -3,14 +3,16 @@ import { doc, getDoc } from 'firebase/firestore';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import useSWR from 'swr/immutable';
+import Layout from '../../../components/layout';
 import { useAuth } from '../../../context/auth';
 import { db } from '../../../firebase/client';
 import { adminDB } from '../../../firebase/server';
 import { useUser } from '../../../lib/user';
 import { Post } from '../../../types/posts';
 import { User } from '../../../types/user';
+import { NextPageWithLayout } from '../../_app';
 
 
 /////////////////////////////////////// 
@@ -42,9 +44,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 ////////// ↑next.jsにおけるnode.jsの領域↑
 ///////////////////////////////////////
 
-const PostDetailPage = ({
-    post,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+const PostDetailPage: NextPageWithLayout<
+    InferGetStaticPropsType<typeof getStaticProps>
+> = ({ post }) => {
     const user = useUser(post?.authorId);
     const {fbUser} = useAuth();
     const isAuthor = fbUser?.uid === post?.authorId;
@@ -78,5 +80,13 @@ const PostDetailPage = ({
       </div>
   )
 }
+
+PostDetailPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+      <Layout>
+        {page}
+      </Layout>
+    )
+  }
 
 export default PostDetailPage

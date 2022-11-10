@@ -2,10 +2,13 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ReactElement } from 'react'
+import Layout from '../components/layout'
 import { useAuth } from '../context/auth'
 import styles from '../styles/Home.module.css'
+import { NextPageWithLayout } from './_app'
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const {user} = useAuth();
 
   return (
@@ -24,6 +27,14 @@ const Home: NextPage = () => {
         </Link>
       </main>
     </div>
+  )
+}
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
   )
 }
 

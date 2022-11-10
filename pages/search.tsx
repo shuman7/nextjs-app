@@ -1,6 +1,6 @@
 import algoliasearch from 'algoliasearch/lite';
 import { debounce } from 'debounce';
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactElement, ReactNode, useEffect, useState } from 'react'
 import { 
     Configure,
     Hits,
@@ -20,6 +20,8 @@ import { db } from '../firebase/client';
 import useSWR from 'swr/immutable';
 import Link from 'next/link';
 import { useUser } from '../lib/user';
+import { NextPageWithLayout } from './_app';
+import Layout from '../components/layout';
 
 const searchClient = algoliasearch(
     '0IAEHW2DF5', 
@@ -63,7 +65,7 @@ const NoResultsBoundary = ({children}: {children: ReactNode}) => {
         )
 }
 
-const Search = () => {
+const Search: NextPageWithLayout = () => {
     const search: SearchBoxProps['queryHook'] = (query, hook) => {
         hook(query)
     }
@@ -104,6 +106,10 @@ const Search = () => {
         </InstantSearch>
     </div>
   )
+}
+
+Search.getLayout = function getLayout(page: ReactElement) {
+    return <Layout>{page}</Layout>
 }
 
 export default Search
