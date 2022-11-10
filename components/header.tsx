@@ -1,9 +1,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { useAuth } from '../context/auth'
 import UserMenu from './user-menu'
 
 const Header = () => {
+  const {user, isLoading} = useAuth();
+
+
+  if (isLoading) {
+    return null;
+  }
   return (
     <header>
           <div className="container">
@@ -14,7 +21,7 @@ const Header = () => {
                 </a>
               </Link>
               <span className="flex-1" />
-              <UserMenu />
+              {user ? (<UserMenu />) : (<Link href="/login"><a>ログイン</a></Link>)}
             </div>
           </div>
         </header>
