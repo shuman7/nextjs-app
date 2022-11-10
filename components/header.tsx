@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import UserMenu from './user-menu'
 
 const Header = () => {
   return (
@@ -13,7 +14,7 @@ const Header = () => {
                 </a>
               </Link>
               <span className="flex-1" />
-              <span className='bg-slate-300 rounded-full w-9 h-9'></span>
+              <UserMenu />
             </div>
           </div>
         </header>
