@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useAuth } from '../context/auth'
 import styles from '../styles/Home.module.css'
 
@@ -18,6 +19,9 @@ const Home: NextPage = () => {
       <main>
         <p>{user?.name}</p>
         <p>{user?.nickname}</p>
+        <Link href='/search'>
+          <a>searchページ</a>
+        </Link>
       </main>
     </div>
   )
