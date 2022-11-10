@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import Button from '../components/button';
 import { useAuth } from '../context/auth';
-import { db } from '../firebase/client';
+import { auth, db } from '../firebase/client';
 import { Post } from '../types/posts';
 
 const PostForm = ({isEditMode}: {
@@ -55,8 +55,27 @@ const PostForm = ({isEditMode}: {
             authorId: fbUser.uid,
         }
 
-        setDoc(ref, post).then(() => {
-            alert(`記事を${isEditMode ? '更新' : '作成'}しました`)
+        setDoc(ref, post).then(async () => {
+            const path = `/posts/${post.id}`
+
+            // fetchを行うと即席で秘密の合言葉的なのを生成する
+            const token = await auth.currentUser?.getIdToken(true)
+
+            fetch(`/api/revalidate?path=${path}`, {
+                method: 'POST',
+                headers: {
+                    'authorization': 'Bearer ' + token,
+                }
+            })
+                .then((res) => res.json()) //revalidateが成功したら成功した結果が、resに渡る。res.json()でjson形式にして中身を取り出せる。
+                // res.json自体もpromisになっているため、時間がかかる。その取り出しが成功したら下記のthenが走るという世界観
+                .then(() => {
+                    alert(`記事を${isEditMode ? '更新' : '作成'}しました`)
+                })
+                .catch(e => {
+                    console.log(e);
+                    alert('ページ再生成が失敗しました')
+                })
         });
     }
 
