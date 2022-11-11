@@ -5,7 +5,7 @@ import { NextPageWithLayout } from './_app';
 const Profile: NextPageWithLayout = () => {
     return (
         <div>
-            <h1>設定画面</h1>
+            <h1>プロフィール設定</h1>
 
             
         </div>
