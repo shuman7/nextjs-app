@@ -1,14 +1,36 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 import Layout from '../components/layout'
+import PostItemCard from '../components/post-item-card'
 import { useAuth } from '../context/auth'
+import { adminDB } from '../firebase/server'
 import styles from '../styles/Home.module.css'
+import { Post } from '../types/posts'
 import { NextPageWithLayout } from './_app'
 
-const Home: NextPageWithLayout = () => {
+export const getStaticProps: GetStaticProps<{
+  posts: Post[];
+}> = async (context) => {
+const snap = await adminDB
+.collection('posts')
+.orderBy('createdAt', 'desc')
+.get() //このidはファイル名の[]内のテキストと同じ。[post].tsxであれば、ここはpostになる。
+const posts = snap.docs.map(doc => doc.data() as Post)
+
+return {
+  props: {
+      posts,
+      // post: post これと上記はjs的には全く一緒
+  },
+}
+}
+
+const Home: NextPageWithLayout<
+    InferGetStaticPropsType<typeof getStaticProps>
+> = ({posts}) => {
   const {user} = useAuth();
 
   return (
@@ -20,11 +42,17 @@ const Home: NextPageWithLayout = () => {
       </Head>
 
       <main>
-        <p>{user?.name}</p>
-        <p>{user?.nickname}</p>
-        <Link href='/search'>
-          <a>searchページ</a>
-        </Link>
+        <h2>最新の記事</h2>
+        {posts?.length ? 
+          <ul className='space-y-3'>
+            {posts.map(post => (
+              <li key={post.id}>
+                <PostItemCard post={post} />
+              </li>
+            ))}
+          </ul> 
+          : <p>記事がありません</p>
+        }
       </main>
     </div>
   )
