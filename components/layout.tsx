@@ -11,7 +11,7 @@ const Layout = ({children}:{
     <div>
         <Header />
         
-        <main>
+        <main className='relative z-0'>
             {children}
         </main>
         
