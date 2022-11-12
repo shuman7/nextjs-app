@@ -12,7 +12,6 @@ const Layout = ({children}:{
         <Header />
         
         <main>
-            トップページ
             {children}
         </main>
         
