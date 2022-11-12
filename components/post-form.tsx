@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import Button from '../components/button';
 import { useAuth } from '../context/auth';
 import { auth, db } from '../firebase/client';
+import { revalidate } from '../lib/revalidate';
 import { Post } from '../types/posts';
 
 const PostForm = ({isEditMode}: {
@@ -56,17 +57,10 @@ const PostForm = ({isEditMode}: {
         }
 
         setDoc(ref, post).then(async () => {
-            const path = `/posts/${post.id}`
+            await revalidate('/')
 
             // fetchを行うと即席で秘密の合言葉的なのを生成する
-            const token = await auth.currentUser?.getIdToken(true)
-
-            fetch(`/api/revalidate?path=${path}`, {
-                method: 'POST',
-                headers: {
-                    'authorization': 'Bearer ' + token,
-                }
-            })
+            return revalidate(`/posts/${post.id}`)
                 .then((res) => res.json()) //revalidateが成功したら成功した結果が、resに渡る。res.json()でjson形式にして中身を取り出せる。
                 // res.json自体もpromisになっているため、時間がかかる。その取り出しが成功したら下記のthenが走るという世界観
                 .then(() => {
@@ -81,8 +75,12 @@ const PostForm = ({isEditMode}: {
 
     const deletePost = () => {
         const ref = doc(db, `posts/${editTargetId}`)
-        return deleteDoc(ref).then(() => {
+        return deleteDoc(ref).then( async () => {
             alert('記事を削除しました');
+
+            await revalidate('/')
+            await revalidate(`/posts/${editTargetId}`)
+
             router.push('/');
         })
     }
@@ -141,7 +139,10 @@ const PostForm = ({isEditMode}: {
             </div>
 
                 <Button>{isEditMode ? '更新' : '投稿'}</Button>
-                <button type="button" onClick={deletePost}>削除</button>
+                
+                {isEditMode && (
+                    <button type="button" onClick={deletePost}>削除</button>
+                )}
         </form>
     </div>
   )

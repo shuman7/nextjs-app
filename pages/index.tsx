@@ -10,6 +10,11 @@ import { adminDB } from '../firebase/server'
 import styles from '../styles/Home.module.css'
 import { Post } from '../types/posts'
 import { NextPageWithLayout } from './_app'
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { A11y, Navigation, Pagination, Scrollbar, Keyboard } from 'swiper'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+
+import 'swiper/css';
 
 export const getStaticProps: GetStaticProps<{
   posts: Post[];
@@ -17,6 +22,7 @@ export const getStaticProps: GetStaticProps<{
 const snap = await adminDB
 .collection('posts')
 .orderBy('createdAt', 'desc')
+.limit(20)
 .get() //このidはファイル名の[]内のテキストと同じ。[post].tsxであれば、ここはpostになる。
 const posts = snap.docs.map(doc => doc.data() as Post)
 
@@ -42,15 +48,56 @@ const Home: NextPageWithLayout<
       </Head>
 
       <main>
+        <div>
+          <div className="relative">
+            <Swiper 
+              modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
+              loop 
+              navigation={{
+                nextEl: '#next',
+                prevEl: '#prev',
+              }}
+              keyboard
+              pagination={{
+                el: '#pagination',
+                bulletClass: 'w-2 h-2 rounded-full block bg-slate-400 cursor-pointer',
+                bulletActiveClass: 'bg-blue-500',
+                clickable: true,
+              }}
+              spaceBetween={50} 
+              slidesPerView={1}
+            >
+              {new Array(5).fill(null).map((_, index) => {
+                return (
+                  <SwiperSlide key={index}>
+                    <div className='bg-slate-200 aspect-video grid content-center'>
+                      <p className="tet-3xl font-bold text-blue-500 text-center">
+                        {index}
+                      </p>
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+            <div id="next" className='absolute top-1/2 z-10 -translate-y-1/2 p-4 right-0'>
+               <ChevronRightIcon className='w-8 h-8 opacity-60' />
+            </div>
+            <div id="prev" className='absolute top-1/2 z-10 -translate-y-1/2 p-4'>
+              <ChevronLeftIcon className='w-8 h-8 opacity-60' />
+            </div>
+          </div>
+          <div id="pagination" className='flex space-x-2 justify-center mt-4'/>
+        </div>
+
         <h2>最新の記事</h2>
-        {posts?.length ? 
+        {posts?.length ? (
           <ul className='space-y-3'>
             {posts.map(post => (
               <li key={post.id}>
                 <PostItemCard post={post} />
               </li>
             ))}
-          </ul> 
+          </ul> )
           : <p>記事がありません</p>
         }
       </main>
