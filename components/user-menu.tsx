@@ -4,6 +4,7 @@ import Link from 'next/link'
 import {logout} from '../lib/auth'
 import { userInfo } from 'os'
 import { useAuth } from '../context/auth'
+import { UserIcon } from '@heroicons/react/24/outline'
 
 const items = [
     {
@@ -45,12 +46,15 @@ const UserMenu = () => {
   return (
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="bg-slate-300 block rounded-full w-9 h-9 overflow-hidden">
-              <img 
-                src={user.avatarURL} 
-                className="w-full h-full object-cover block" 
-                alt="" 
-             />
+          <Menu.Button className="bg-slate-300 block rounded-full w-9 h-9 overflow-hidden relative">
+              { user.avatarURL ? (
+                <img 
+                    src={ user.avatarURL } 
+                    className="w-full h-full object-cover block" 
+                    alt="ユーザープロフィール画像"
+                />
+                ) : <UserIcon className="w-6 h-6 object-cover block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+              }
           </Menu.Button>
         </div>
         <Transition

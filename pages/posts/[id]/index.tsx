@@ -1,3 +1,4 @@
+import { UserIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { doc, getDoc } from 'firebase/firestore';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
@@ -66,7 +67,20 @@ const PostDetailPage: NextPageWithLayout<
           <h1 className="font-bold text-lg mb-6">{post.title}</h1>
           {user && (
               <div className="flex mb-4">
-                    <div className="w-10 h-10 bg-slate-400 rounded-full mr-2"></div>
+                  {/* アバター画像 */}
+                    {/* <div className="w-10 h-10 bg-slate-400 rounded-full mr-2"></div> */}
+                    <div className="relative">
+                    { user.avatarURL ? (
+                            <img 
+                                src={ user.avatarURL } 
+                                className="w-10 h-10 bg-slate-400 rounded-full mr-2" 
+                                alt="ユーザープロフィール画像"
+                            />
+                            ) : <UserIcon className="w-10 h-10 object-cover block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                        }
+                    </div>
+                  {/* / アバター画像 */}
+
                     <div className="flex-1">
                         <p>{user.name}</p>
                         <p className="text-slate-500">
