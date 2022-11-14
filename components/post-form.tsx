@@ -117,6 +117,31 @@ const PostForm = ({isEditMode}: {
 
             <div>
                 <label className="block mb-0.5" htmlFor="name">
+                    画像投稿*
+                </label>
+                <input 
+                    className={classNames(
+                        'rouded border',
+                        errors.title ? 'border-red-500' : 'border-slate-300' 
+                    )}
+                    autoComplete="name"
+                    {...register('title',{
+                        required: '必須入力です',
+                        maxLength: {
+                            value: 100,
+                            message: '最大50文字です',
+                        },
+                    })} 
+                    id="main-img" 
+                    type="text" 
+                />
+                {errors.title && (
+                    <p className="text-red-500 mt-0.5">{errors.title?.message}</p>
+                )}
+            </div>
+
+            <div>
+                <label className="block mb-0.5" htmlFor="name">
                     本文*
                 </label>
                 <textarea 

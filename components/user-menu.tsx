@@ -2,7 +2,6 @@ import { Menu, Transition } from '@headlessui/react'
 import { forwardRef, Fragment, ReactNode, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import {logout} from '../lib/auth'
-import { userInfo } from 'os'
 import { useAuth } from '../context/auth'
 import { UserIcon } from '@heroicons/react/24/outline'
 

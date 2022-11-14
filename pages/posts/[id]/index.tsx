@@ -1,18 +1,14 @@
 import { UserIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
-import { doc, getDoc } from 'firebase/firestore';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import useSWR from 'swr/immutable';
 import Layout from '../../../components/layout';
 import { useAuth } from '../../../context/auth';
-import { db } from '../../../firebase/client';
 import { adminDB } from '../../../firebase/server';
 import { useUser } from '../../../lib/user';
 import { Post } from '../../../types/posts';
-import { User } from '../../../types/user';
 import { NextPageWithLayout } from '../../_app';
 
 
